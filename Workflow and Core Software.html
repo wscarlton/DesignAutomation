@@ -1933,7 +1933,7 @@
 
     function renderToolsTab() {
       const grid = document.getElementById('toolsGrid');
-      grid.innerHTML = TOOLS_INTEGRATIONS.map((tool) => `<div class="software-card animate-in"><div class="software-card-header"><div class="software-card-icon"><i class="fas fa-tools"></i></div></div><div class="software-card-title">${tool.title}</div><div class="software-card-meta">${tool.value}</div><ul class="content-list" style="margin-top: 10px;">${tool.bullets.map((b) => `<li>${b}</li>`).join('')}</ul><p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"><strong>Deliverables:</strong> ${tool.deliverables.join('; ')}</p><p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"><strong>Success Measures:</strong> ${tool.success.join('; ')}</p><p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"><strong>Risks:</strong> ${tool.risks.join('; ')}</p></div>`).join('');
+      grid.innerHTML = TOOLS_INTEGRATIONS.map((tool) => `<div class="software-card animate-in"><div class="software-card-header"><div class="software-card-icon"><i class="fas fa-tools"></i></div></div><div class="software-card-title">${tool.title}</div><div class="software-card-meta">${tool.value}</div><ul class="content-list" style="margin-top: 10px;">${tool.bullets.map((b) => `<li>${b}</li>`).join('')}</ul></div>`).join('');
     }
 
     // Tab switching
