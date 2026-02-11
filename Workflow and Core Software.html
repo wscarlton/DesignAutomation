@@ -216,6 +216,68 @@
       border-color: var(--accent-orange);
     }
 
+    .multiselect {
+      position: relative;
+      min-width: 220px;
+    }
+
+    .multiselect-button {
+      width: 100%;
+      text-align: left;
+      padding: 10px 36px 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .multiselect-button::after {
+      content: '▾';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .multiselect-button.warning {
+      border-color: var(--accent-orange);
+    }
+
+    .multiselect-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-md);
+      max-height: 220px;
+      overflow: auto;
+      padding: 8px;
+      z-index: 20;
+    }
+
+    .multiselect.open .multiselect-menu {
+      display: block;
+    }
+
+    .multiselect-menu label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      padding: 6px 4px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
     .warning-banner {
       background: var(--accent-orange-light);
       border: 1px solid var(--accent-orange);
@@ -273,6 +335,60 @@
     .workflow-title {
       font-size: 20px;
       font-weight: 700;
+    }
+
+    .workflow-graphic-block {
+      margin-bottom: 20px;
+    }
+
+    .workflow-graphic-inner {
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-tertiary);
+      padding: 20px;
+    }
+
+    .workflow-graphic-empty {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+
+    .workflow-graphic-title {
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .workflow-graphic-subtitle {
+      font-size: 12px;
+    }
+
+    .workflow-tag-legend {
+      margin-top: 10px;
+    }
+
+    .workflow-tag-legend h3 {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .tag-legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .tag-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
     }
 
     .workflow-legend {
@@ -542,13 +658,20 @@
 
     /* Software List */
     .software-item {
+      cursor: pointer;
+      transition: border-color 0.2s;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 12px 14px;
       background: var(--bg-tertiary);
+      border: 1px solid transparent;
       border-radius: var(--radius-sm);
       margin-bottom: 8px;
+    }
+
+    .software-item:hover {
+      border-color: var(--accent-blue);
     }
 
     .software-info {
@@ -778,6 +901,11 @@
       transform: translateY(-2px);
     }
 
+    .software-card.highlighted {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px var(--accent-blue-light);
+    }
+
     .software-card-header {
       display: flex;
       justify-content: space-between;
@@ -870,6 +998,26 @@
       color: var(--text-secondary);
       max-width: 400px;
       margin: 0 auto;
+    }
+
+
+    .tools-container {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .tools-header p {
+      color: var(--text-muted);
+      margin: 6px 0 18px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
     }
 
     /* Empty state */
@@ -993,7 +1141,7 @@
           <i class="fas fa-th-large"></i>
           Software
         </button>
-        <button class="nav-tab placeholder" data-tab="tools">
+        <button class="nav-tab" data-tab="tools">
           <i class="fas fa-puzzle-piece"></i>
           Tools & Integrations
         </button>
@@ -1021,9 +1169,12 @@
         </div>
         <div class="filter-group">
           <label class="filter-label required">Material</label>
-          <select id="filterMaterial" class="filter-select">
-            <option value="">Select Material</option>
-          </select>
+          <div class="multiselect" id="filterMaterial">
+            <button type="button" class="multiselect-button" id="materialButton">Select Materials</button>
+            <div class="multiselect-menu" id="materialMenu">
+              <!-- Populated by JS -->
+            </div>
+          </div>
         </div>
         <div class="filter-group">
           <label class="filter-label">System</label>
@@ -1040,7 +1191,7 @@
       </div>
       <div id="warningBanner" class="warning-banner" style="display: none;">
         <i class="fas fa-exclamation-triangle"></i>
-        <span>Please select both Region and Material to view software recommendations.</span>
+        <span>Please select Region and at least one Material to view software recommendations.</span>
       </div>
     </div>
   </div>
@@ -1053,23 +1204,29 @@
         <div class="workflow-map">
           <div class="workflow-header">
             <h2 class="workflow-title">Structural Engineering Workflow</h2>
-            <div class="workflow-legend">
-              <div class="legend-item">
-                <div class="legend-line advancement"></div>
-                <span>Advancement</span>
+          </div>
+          <div class="workflow-graphic-block" id="workflowGraphicBlock">
+            <div class="workflow-graphic-inner">
+              <div class="workflow-graphic-empty">
+                <i class="fas fa-image"></i>
+                <div>
+                  <div class="workflow-graphic-title">Workflow Overview Graphic</div>
+                  <div class="workflow-graphic-subtitle">
+                    Add an image file to /assets and update the &lt;img&gt; src here.
+                  </div>
+                </div>
               </div>
-              <div class="legend-item">
-                <div class="legend-line iteration" style="border-top: 3px dashed var(--accent-orange); height: 0;"></div>
-                <span>Iteration</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-line handoff"></div>
-                <span>Handoff</span>
-              </div>
+              <!-- Once you add an image, uncomment this:
+              <img class="workflow-graphic-img" src="assets/structural-workflow-overview.svg" alt="Structural engineering workflow overview" />
+              -->
             </div>
           </div>
           <div class="workflow-stages" id="workflowStages">
             <!-- Populated by JS -->
+          </div>
+          <div class="workflow-tag-legend" id="workflowTagLegend">
+            <h3>Tile Tags</h3>
+            <div class="tag-legend-grid" id="tagLegendGrid"></div>
           </div>
         </div>
         <div class="context-panel" id="contextPanel">
@@ -1098,11 +1255,7 @@
           <div class="filter-section">
             <div class="toggle-row">
               <div class="toggle" id="coreOnlyToggle"></div>
-              <span class="toggle-label">Show Core Only</span>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle active" id="includeExceptionsToggle"></div>
-              <span class="toggle-label">Include Exceptions</span>
+              <span class="toggle-label">Show Core Stack</span>
             </div>
           </div>
         </div>
@@ -1114,10 +1267,14 @@
 
     <!-- Placeholder Tabs -->
     <div id="toolsTab" class="tab-content">
-      <div class="placeholder-content">
-        <i class="fas fa-puzzle-piece"></i>
-        <h2>Tools & Integrations</h2>
-        <p>Custom tools and integrations that augment the core software stack. Coming soon.</p>
+      <div class="tools-container">
+        <div class="tools-header">
+          <h2>Tools & Integrations</h2>
+          <p>Custom tools and platform integrations that augment the core software stack.</p>
+        </div>
+        <div class="tools-grid" id="toolsGrid">
+          <!-- Populated by JS -->
+        </div>
       </div>
     </div>
 
@@ -1145,13 +1302,7 @@
         regions: ["US", "Canada", "Europe (Eurocode)", "Australia / New Zealand", "India", "Other"],
         systems: ["Gravity", "Lateral"],
         analysis_types: ["Linear-Static", "Non-Linear", "Modal Response", "Dynamic / Vibration", "Staged Construction"],
-        materials: {
-          "Steel": ["Non-composite", "Composite", "Fabricated elements (Joists, etc)", "Decking"],
-          "Concrete": ["Mild reinforced", "Post-tensioned", "Precast"],
-          "Masonry": ["CMU"],
-          "Wood": ["Decking (Plywood, T&G, etc)", "Dimensional lumber", "Engineered framing (LVL, etc)", "Mass timber elements (CLT, etc)"],
-          "Other": []
-        }
+        materials: ["Steel", "Concrete", "Masonry", "Wood", "Other"]
       },
       workflow: {
         nodes: [
@@ -1160,7 +1311,7 @@
           { id: "spacial_inputs", stage: "Design Inputs", name: "Spatial Inputs", staff_tags: ["BIM", "ENG"], deliverable_tags: ["E"], contents: ["Overall Structure Size", "Layout (grid spacing, etc)", "Verticality (height, stories, below grade, etc)"] },
           { id: "structural_selections", stage: "Design Inputs", name: "Structural Selections", staff_tags: ["ENG"], deliverable_tags: ["B", "D", "E"], contents: ["Framing Systems", "Vertical Elements (columns, walls)", "Horizontal Elements (beams, slabs)", "Lateral Systems", "Foundation Systems", "Geotechnical Coordination"] },
           { id: "validation", stage: "Design Inputs", name: "Validation", staff_tags: ["ENG"], deliverable_tags: ["C"], contents: ["Rules of Thumb", "Similar Projects/ Practices", "Conceptual Validation", "Cost/ Constructability Consideration"] },
-          { id: "general_analysis", stage: "Design Execution", name: "General Analysis", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Primary structural software for modeling, analysis, and design"], contents: ["Template/ Presets", "Model Development", "Grids/ Overall Setup", "Element Modeling", "Load Application", "Model Analysis", "Initial Performance Validation"] },
+          { id: "general_analysis", stage: "Design Execution", name: "General Analysis", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Primary structural software for modeling, analysis, and design"], contents: ["Template/ Presets", "Model Development", "Grids/ Overall Setup", "Element Modeling", "Load Application", "Model Analysis", "Member Code Checks", "Design Iteration and Validation"] },
           { id: "element_design", stage: "Design Execution", name: "Element Design", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Often in primary model; sometimes requires additional software"], contents: ["Columns", "Beams, Girders, etc", "Slabs, Decks", "Walls (including openings, boundary elements)", "Bracing/ Frame Elements", "Transfer Elements", "Special Elements (Trusses, Outriggers, etc)"] },
           { id: "component_connection_design", stage: "Design Execution", name: "Component/ Connection Design", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Connection design rarely in primary engineering model(s)"], contents: ["Deck/ Diaphragm", "Beam to Beam", "Beam to Column", "Beam to Wall", "Column Base Plate", "Bracing to Framing", "Misc Detail Connections"] },
           { id: "foundation_design", stage: "Design Execution", name: "Foundation Design", staff_tags: ["ENG"], deliverable_tags: ["C"], contents: ["Slab-on-Grade", "Grade Beams", "Walls", "Isolated Footings", "Combined Footings", "Mat/ Raft Foundations", "Drilled Piers", "Driven Piles/ Piers", "Pile Caps"] },
@@ -1198,52 +1349,52 @@
         ]
       },
       software_catalog: [
-        { id: "revit", name: "Revit", category: "1) Production & Coordination", survey_usage: 0.959, core: true, exception: false },
-        { id: "dynamo", name: "Dynamo", category: "1) Production & Coordination", survey_usage: 0.271, core: false, exception: false },
-        { id: "autocad", name: "AutoCAD", category: "1) Production & Coordination", survey_usage: 0.405, core: false, exception: false },
-        { id: "aecosim", name: "AECOSIM", category: "1) Production & Coordination", survey_usage: 0.285, core: true, exception: false },
-        { id: "openbuild", name: "OpenBuild", category: "1) Production & Coordination", survey_usage: 0.119, core: false, exception: false },
-        { id: "sketchup", name: "SketchUP", category: "1) Production & Coordination", survey_usage: 0.038, core: false, exception: false },
-        { id: "s3d", name: "S3D", category: "1) Production & Coordination", survey_usage: 0.032, core: false, exception: false },
-        { id: "navisworks", name: "Navisworks", category: "1) Production & Coordination", survey_usage: 0.818, core: true, exception: false },
-        { id: "revizto", name: "Revizto", category: "1) Production & Coordination", survey_usage: 0.405, core: false, exception: true },
-        { id: "bluebeam_revu", name: "Bluebeam Revu", category: "1) Production & Coordination", survey_usage: 0.169, core: true, exception: false },
-        { id: "staad_pro", name: "STAAD.Pro", category: "2) General Design", survey_usage: 0.776, core: true, exception: false },
-        { id: "etabs", name: "ETABS", category: "2) General Design", survey_usage: 0.657, core: true, exception: false },
-        { id: "sap2000", name: "SAP2000", category: "2) General Design", survey_usage: 0.628, core: true, exception: false },
-        { id: "ram_structural_system", name: "RAM Structural System", category: "2) General Design", survey_usage: 0.598, core: true, exception: false },
-        { id: "autodesk_robot", name: "Autodesk Robot", category: "2) General Design", survey_usage: 0.492, core: false, exception: true },
-        { id: "ram_concept", name: "RAM Concept", category: "2) General Design", survey_usage: 0.408, core: false, exception: true },
-        { id: "ram_elements", name: "RAM Elements", category: "2) General Design", survey_usage: 0.332, core: false, exception: true },
-        { id: "visual_analysis", name: "Visual Analysis", category: "2) General Design", survey_usage: 0.274, core: false, exception: false },
-        { id: "risa_3d", name: "RISA 3D", category: "2) General Design", survey_usage: 0.166, core: false, exception: true },
-        { id: "spacegass", name: "Spacegass", category: "2) General Design", survey_usage: 0.131, core: false, exception: true },
-        { id: "risa_floor", name: "RISA Floor", category: "2) General Design", survey_usage: 0.084, core: false, exception: false },
-        { id: "tekla_structural_designer", name: "Tekla Structural Designer", category: "2) General Design", survey_usage: 0.038, core: false, exception: false },
-        { id: "adapt_pt_rc", name: "ADAPT-PT/RC", category: "3) Element Design", survey_usage: 0.134, core: true, exception: false },
-        { id: "rapt", name: "RAPT", category: "3) Element Design", survey_usage: 0.131, core: false, exception: true },
-        { id: "altair_s_concrete", name: "Altair S-CONCRETE", category: "3) Element Design", survey_usage: 0.166, core: false, exception: true },
-        { id: "spcolumn", name: "spColumn", category: "3) Element Design", survey_usage: 0.166, core: false, exception: false },
-        { id: "spbeam", name: "spBeam", category: "3) Element Design", survey_usage: 0.032, core: false, exception: false },
-        { id: "ram_sbeam", name: "RAM SBeam", category: "3) Element Design", survey_usage: 0.218, core: true, exception: false },
-        { id: "hilti_profis", name: "Hilti PROFIS Engineering", category: "4) Components/ Connections", survey_usage: 0.807, core: true, exception: false },
-        { id: "ram_connection", name: "RAM Connection", category: "4) Components/ Connections", survey_usage: 0.589, core: true, exception: false },
-        { id: "idea_statica", name: "IDEA StatiCa", category: "4) Components/ Connections", survey_usage: 0.283, core: false, exception: true },
-        { id: "risa_connection", name: "RISA Connection", category: "4) Components/ Connections", survey_usage: 0.032, core: false, exception: false },
-        { id: "sds_2", name: "SDS/2", category: "4) Components/ Connections", survey_usage: 0.032, core: false, exception: false },
-        { id: "safe", name: "SAFE", category: "5) Foundation Design", survey_usage: 0.348, core: true, exception: false },
-        { id: "staad_foundation", name: "STAAD Foundation Advanced", category: "5) Foundation Design", survey_usage: 0.114, core: true, exception: false },
-        { id: "risa_foundation", name: "RISA Foundation", category: "5) Foundation Design", survey_usage: 0.084, core: false, exception: true },
-        { id: "lpile", name: "LPile", category: "5) Foundation Design", survey_usage: 0.032, core: true, exception: false },
-        { id: "spmat", name: "spMat", category: "5) Foundation Design", survey_usage: 0.032, core: false, exception: true },
-        { id: "tekla_tedds", name: "Tekla Tedds", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.755, core: true, exception: false },
-        { id: "mathcad", name: "Mathcad", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.369, core: true, exception: false },
-        { id: "ies_shape_builder", name: "IES Shape Builder", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.166, core: false, exception: false },
-        { id: "structural_tool_kit", name: "Structural Tool Kit", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.131, core: false, exception: false },
-        { id: "checkwind", name: "CheckWind", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.131, core: false, exception: false },
-        { id: "enercal", name: "ENERCAL", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.052, core: false, exception: false },
-        { id: "strucalc", name: "StruCalc", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.032, core: false, exception: false },
-        { id: "codesearch", name: "CodeSearch", category: "6) Engineering Calculation & Custom Solutions", survey_usage: null, core: true, exception: false }
+        { id: "revit", name: "Revit", category: "1) Production & Coordination", core: true, exception: false },
+        { id: "dynamo", name: "Dynamo", category: "1) Production & Coordination", core: false, exception: false },
+        { id: "autocad", name: "AutoCAD", category: "1) Production & Coordination", core: false, exception: false },
+        { id: "aecosim", name: "AECOSIM", category: "1) Production & Coordination", core: true, exception: false },
+        { id: "openbuild", name: "OpenBuild", category: "1) Production & Coordination", core: false, exception: false },
+        { id: "sketchup", name: "SketchUP", category: "1) Production & Coordination", core: false, exception: false },
+        { id: "s3d", name: "S3D", category: "1) Production & Coordination", core: false, exception: false },
+        { id: "navisworks", name: "Navisworks", category: "1) Production & Coordination", core: true, exception: false },
+        { id: "revizto", name: "Revizto", category: "1) Production & Coordination", core: false, exception: true },
+        { id: "bluebeam_revu", name: "Bluebeam Revu", category: "1) Production & Coordination", core: true, exception: false },
+        { id: "staad_pro", name: "STAAD.Pro", category: "2) General Design", core: true, exception: false },
+        { id: "etabs", name: "ETABS", category: "2) General Design", core: true, exception: false },
+        { id: "sap2000", name: "SAP2000", category: "2) General Design", core: true, exception: false },
+        { id: "ram_structural_system", name: "RAM Structural System", category: "2) General Design", core: true, exception: false },
+        { id: "autodesk_robot", name: "Autodesk Robot", category: "2) General Design", core: false, exception: true },
+        { id: "ram_concept", name: "RAM Concept", category: "2) General Design", core: false, exception: true },
+        { id: "ram_elements", name: "RAM Elements", category: "2) General Design", core: false, exception: true },
+        { id: "visual_analysis", name: "Visual Analysis", category: "2) General Design", core: false, exception: false },
+        { id: "risa_3d", name: "RISA 3D", category: "2) General Design", core: false, exception: true },
+        { id: "spacegass", name: "Spacegass", category: "2) General Design", core: false, exception: true },
+        { id: "risa_floor", name: "RISA Floor", category: "2) General Design", core: false, exception: false },
+        { id: "tekla_structural_designer", name: "Tekla Structural Designer", category: "2) General Design", core: false, exception: false },
+        { id: "adapt_pt_rc", name: "ADAPT-PT/RC", category: "3) Element Design", core: true, exception: false },
+        { id: "rapt", name: "RAPT", category: "3) Element Design", core: false, exception: true },
+        { id: "altair_s_concrete", name: "Altair S-CONCRETE", category: "3) Element Design", core: false, exception: true },
+        { id: "spcolumn", name: "spColumn", category: "3) Element Design", core: false, exception: false },
+        { id: "spbeam", name: "spBeam", category: "3) Element Design", core: false, exception: false },
+        { id: "ram_sbeam", name: "RAM SBeam", category: "3) Element Design", core: true, exception: false },
+        { id: "hilti_profis", name: "Hilti PROFIS Engineering", category: "4) Components/ Connections", core: true, exception: false },
+        { id: "ram_connection", name: "RAM Connection", category: "4) Components/ Connections", core: true, exception: false },
+        { id: "idea_statica", name: "IDEA StatiCa", category: "4) Components/ Connections", core: false, exception: true },
+        { id: "risa_connection", name: "RISA Connection", category: "4) Components/ Connections", core: false, exception: false },
+        { id: "sds_2", name: "SDS/2", category: "4) Components/ Connections", core: false, exception: false },
+        { id: "safe", name: "SAFE", category: "5) Foundation Design", core: true, exception: false },
+        { id: "staad_foundation", name: "STAAD Foundation Advanced", category: "5) Foundation Design", core: true, exception: false },
+        { id: "risa_foundation", name: "RISA Foundation", category: "5) Foundation Design", core: false, exception: true },
+        { id: "lpile", name: "LPile", category: "5) Foundation Design", core: true, exception: false },
+        { id: "spmat", name: "spMat", category: "5) Foundation Design", core: false, exception: true },
+        { id: "tekla_tedds", name: "Tekla Tedds", category: "6) Engineering Calculation & Custom Solutions", core: true, exception: false },
+        { id: "mathcad", name: "Mathcad", category: "6) Engineering Calculation & Custom Solutions", core: true, exception: false },
+        { id: "ies_shape_builder", name: "IES Shape Builder", category: "6) Engineering Calculation & Custom Solutions", core: false, exception: false },
+        { id: "structural_toolkit", name: "Structural Toolkit", category: "6) Engineering Calculation & Custom Solutions", core: false, exception: true },
+        { id: "checkwind", name: "CheckWind", category: "6) Engineering Calculation & Custom Solutions", core: false, exception: false },
+        { id: "enercalc", name: "ENERCALC", category: "6) Engineering Calculation & Custom Solutions", core: false, exception: false },
+        { id: "strucalc", name: "StruCalc", category: "6) Engineering Calculation & Custom Solutions", core: false, exception: false },
+        { id: "codesearch", name: "CodeSearch", category: "6) Engineering Calculation & Custom Solutions", core: true, exception: false }
       ]
     };
 
@@ -1262,91 +1413,184 @@
       structural_selections: ["tekla_tedds", "mathcad"]
     };
 
+    const DELIVERABLE_TAG_META = {
+      A: { abbr: "SOW", name: "Scope & Requirements" },
+      B: { abbr: "BOD", name: "Criteria / Basis of Design" },
+      C: { abbr: "CALC", name: "Calculations & Analysis Models" },
+      D: { abbr: "DWG", name: "Drawings / Details" },
+      E: { abbr: "BIM", name: "BIM Model / Coordination" },
+      F: { abbr: "SPEC", name: "Specifications / Notes" }
+    };
+
+    const CATEGORY_DESCRIPTIONS = {
+      "1) Production & Coordination": "Authoring, documentation, model coordination, and deliverable production.",
+      "2) General Design": "Global structural modeling/ analysis/ design tools. Often acts as the primary structural model.",
+      "3) Element Design": "Member and element-level design tools (columns, beams, PT, etc.).",
+      "4) Components/ Connections": "Member connections and anchorage/embedded component design.",
+      "5) Foundation Design": "Foundation analysis, design, and geotechnical/foundation-specific workflows.",
+      "6) Engineering Calculation & Custom Solutions": "Calculation platforms and specialty tools for checks, automation, and custom workflows."
+    };
+
+    const REGION_NORMALIZATION = {
+      "US": "US",
+      "Canada": "CAN",
+      "Europe (Eurocode)": "EUR",
+      "Australia / New Zealand": "AU/NZ",
+      "India": "IND",
+      "Other": "US"
+    };
+
+    const SOFTWARE_CAPABILITIES = {
+      revit: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓", Other: "✓" } },
+      autocad: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓", Other: "✓" } },
+      navisworks: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓", Other: "✓" } },
+      revizto: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓", Other: "✓" } },
+      staad_pro: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "~", Wood: "✓" } },
+      etabs: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "~", Wood: "~" } },
+      sap2000: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "~", Wood: "~" } },
+      ram_structural_system: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓" } },
+      autodesk_robot: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "~", Wood: "✓" } },
+      risa_3d: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓" } },
+      spacegass: { regions: { US: "~", CAN: "~", EUR: "~", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "~" } },
+      tekla_structural_designer: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "~", Wood: "~" } },
+      safe: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Concrete: "✓" } },
+      staad_foundation: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "—", IND: "✓" }, materials: { Concrete: "✓" } },
+      lpile: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "~", IND: "~" }, materials: { Other: "✓" } },
+      idea_statica: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "~" } },
+      ram_connection: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓" } },
+      hilti_profis: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Concrete: "✓", Masonry: "✓" } },
+      altair_s_concrete: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "~", IND: "✓" }, materials: { Concrete: "✓" } },
+      rapt: { regions: { US: "~", CAN: "—", EUR: "~", "AU/NZ": "✓", IND: "~" }, materials: { Concrete: "✓" } },
+      spcolumn: { regions: { US: "✓", CAN: "✓", EUR: "—", "AU/NZ": "—", IND: "✓" }, materials: { Concrete: "✓" } },
+      spbeam: { regions: { US: "✓", CAN: "✓", EUR: "—", "AU/NZ": "—", IND: "✓" }, materials: { Concrete: "✓" } },
+      mathcad: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓", Other: "✓" } },
+      tekla_tedds: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓", Other: "✓" } },
+      enercalc: { regions: { US: "✓", CAN: "~", EUR: "—", "AU/NZ": "—", IND: "—" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓" } },
+      structural_toolkit: { regions: { US: "—", CAN: "—", EUR: "—", "AU/NZ": "✓", IND: "—" }, materials: { Steel: "✓", Concrete: "✓", Masonry: "✓", Wood: "✓" } },
+      checkwind: { regions: { US: "✓", CAN: "✓", EUR: "✓", "AU/NZ": "✓", IND: "✓" }, materials: { Other: "✓" } }
+    };
+
+    const VENDOR_SOURCES = {
+      etabs: [{ label: "CSI docs (code support)", url: "PASTE_CSI_DOC_URL_HERE" }],
+      sap2000: [{ label: "CSI docs (code support)", url: "PASTE_CSI_DOC_URL_HERE" }],
+      safe: [{ label: "SAFE product docs", url: "PASTE_SAFE_DOC_URL_HERE" }],
+      staad_pro: [{ label: "Bentley STAAD design codes", url: "https://docs.bentley.com/LiveContent/web/STAAD.Pro-v2025.0.0/Help/en/topics/Design/r-stpst_Available_Design_Codes_-_Concrete.html" }],
+      ram_structural_system: [{ label: "Bentley RAM docs", url: "PASTE_RAM_DOC_URL_HERE" }],
+      tekla_structural_designer: [{ label: "Tekla Structural Designer docs", url: "https://support.tekla.com/doc/tekla-structural-designer/2026/ref_steeldesigntoas4100" }],
+      risa_3d: [{ label: "RISA-3D help (design modules)", url: "https://help.risa.com/risahelp/risa3d/Content/Wood/Wood%20-%20Design.htm" }],
+      spacegass: [{ label: "SpaceGass concrete modules", url: "https://spacegass.com/rccolumn/" }],
+      idea_statica: [{ label: "IDEA StatiCa support center", url: "https://www.ideastatica.com/support-center/search?category=theoretical_background&q=capacity" }]
+    };
+
+    const TOOLS_INTEGRATIONS = [
+      { id: "auto_revit_publishing", title: "Automated Revit Publishing", value: "Automates PDF + DWG exports from Revit to multiple endpoints with consistent settings and cadence.", bullets: ["Standardized publish workflow (PDF + CAD/DWG) to network drives, SharePoint, and ProjectWise", "User controls for sheet selection, export settings, and publishing cadence", "Improves coordination by increasing frequency of progress sets"], deliverables: ["Criteria document", "MVP scope/planning document", "Automation tool", "Training + SharePoint content"], success: ["Time savings", "More frequent progress prints", "Reduced rework from outdated information"], risks: ["Adoption risk if workflow isn’t customizable/easy", "Scope creep—deliver core export first before analytics/health features"] },
+      { id: "csi_integrations_foundations", title: "CSI Integrations (Foundation Design)", value: "Streamlines shallow + deep foundation design by reducing manual ETABS/SAFE transfers and standardizing iteration workflows.", bullets: ["Automate data transfer between ETABS and SAFE where applicable", "Standardize shallow footing and drilled pier design/optimization workflows", "Enable post-processing outputs for scheduling and consistency"], deliverables: ["Criteria document", "Best-practice workflow (shallow + deep)", "MVP scope/planning", "Automation + post-processing tools", "Pilot examples", "Training content"], success: ["Time savings", "Improved design consistency", "Reduced iteration cycles"], risks: ["Interoperability stigma may limit adoption", "Region/code specificity—needs SME + regional stakeholder input", "Broad scope (shallow + deep) must stay disciplined"] },
+      { id: "bentley_integrations_connections", title: "Bentley Integrations (Steel Connection Design)", value: "Improves steel connection design efficiency by leveraging RAM/STAAD integrations and reducing duplicated transfer work.", bullets: ["Standardize repeatable connection workflows using RAM Connection + upstream model tools", "Reduce manual data transfer and duplicated modeling effort", "Link to standard designs/details to improve consistency and quality"], deliverables: ["Criteria document", "Generalized workflow + best practices", "MVP scope/planning", "Automation workflows", "Pilot examples", "SharePoint hub content"], success: ["Time savings", "Improved consistency/quality", "Foundation for future integrations + standard detail linkage"], risks: ["Adoption risk due to interoperability baggage", "Lower Bentley usage in some regions", "Technical dependency reduces broad applicability"] }
+    ];
+
     // State
     let state = {
       selectedNode: null,
       selectedRegion: '',
-      selectedMaterial: '',
+      selectedMaterials: [],
       selectedSystem: '',
       selectedAnalysis: '',
       activeTab: 'workflow',
       softwareSearch: '',
       selectedCategory: '',
-      coreOnly: false,
-      includeExceptions: true
+      showCoreStack: false,
+      highlightSoftwareId: null
     };
+
+    function isCapabilitySupported(value) { return value === '✓' || value === '~'; }
+    function getRegionKey() { return REGION_NORMALIZATION[state.selectedRegion] || null; }
+    function supportsTopFilters(softwareId) {
+      const capability = SOFTWARE_CAPABILITIES[softwareId];
+      if (!capability) return true;
+      const regionKey = getRegionKey();
+      const regionPass = !regionKey || isCapabilitySupported(capability.regions?.[regionKey]);
+      const materialPass = state.selectedMaterials.length === 0 || state.selectedMaterials.some((material) => isCapabilitySupported(capability.materials?.[material]));
+      return regionPass && materialPass;
+    }
 
     // Dark mode detection
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.classList.add('dark');
     }
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-      if (event.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+      document.documentElement.classList.toggle('dark', event.matches);
     });
+
+    function renderMaterialButtonLabel() {
+      const button = document.getElementById('materialButton');
+      if (!button) return;
+      if (state.selectedMaterials.length === 0) button.textContent = 'Select Materials';
+      else if (state.selectedMaterials.length <= 2) button.textContent = state.selectedMaterials.join(', ');
+      else button.textContent = `${state.selectedMaterials.length} materials selected`;
+    }
 
     // Initialize filters
     function initFilters() {
       const regionSelect = document.getElementById('filterRegion');
-      const materialSelect = document.getElementById('filterMaterial');
+      const materialControl = document.getElementById('filterMaterial');
+      const materialButton = document.getElementById('materialButton');
+      const materialMenu = document.getElementById('materialMenu');
       const systemSelect = document.getElementById('filterSystem');
       const analysisSelect = document.getElementById('filterAnalysis');
 
-      workflowData.filters.regions.forEach(r => {
-        regionSelect.innerHTML += `<option value="${r}">${r}</option>`;
+      workflowData.filters.regions.forEach((r) => { regionSelect.innerHTML += `<option value="${r}">${r}</option>`; });
+      workflowData.filters.materials.forEach((m) => {
+        materialMenu.innerHTML += `<label><input type="checkbox" value="${m}" /> ${m}</label>`;
+      });
+      workflowData.filters.systems.forEach((s) => { systemSelect.innerHTML += `<option value="${s}">${s}</option>`; });
+      workflowData.filters.analysis_types.forEach((a) => { analysisSelect.innerHTML += `<option value="${a}">${a}</option>`; });
+
+      materialButton.addEventListener('click', () => materialControl.classList.toggle('open'));
+      document.addEventListener('click', (event) => {
+        if (!materialControl.contains(event.target)) materialControl.classList.remove('open');
+      });
+      materialMenu.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+        input.addEventListener('change', () => {
+          state.selectedMaterials = Array.from(materialMenu.querySelectorAll('input:checked')).map((item) => item.value);
+          renderMaterialButtonLabel();
+          updateWarningBanner();
+          updateContextPanel();
+          renderSoftwareGrid();
+        });
       });
 
-      Object.keys(workflowData.filters.materials).forEach(m => {
-        materialSelect.innerHTML += `<option value="${m}">${m}</option>`;
-      });
-
-      workflowData.filters.systems.forEach(s => {
-        systemSelect.innerHTML += `<option value="${s}">${s}</option>`;
-      });
-
-      workflowData.filters.analysis_types.forEach(a => {
-        analysisSelect.innerHTML += `<option value="${a}">${a}</option>`;
-      });
-
-      // Event listeners
       regionSelect.addEventListener('change', (e) => {
         state.selectedRegion = e.target.value;
         updateWarningBanner();
         updateContextPanel();
+        renderSoftwareGrid();
       });
-
-      materialSelect.addEventListener('change', (e) => {
-        state.selectedMaterial = e.target.value;
-        updateWarningBanner();
-        updateContextPanel();
-      });
-
-      systemSelect.addEventListener('change', (e) => {
-        state.selectedSystem = e.target.value;
-      });
-
-      analysisSelect.addEventListener('change', (e) => {
-        state.selectedAnalysis = e.target.value;
-      });
+      systemSelect.addEventListener('change', (e) => { state.selectedSystem = e.target.value; });
+      analysisSelect.addEventListener('change', (e) => { state.selectedAnalysis = e.target.value; });
+      renderMaterialButtonLabel();
     }
 
     function updateWarningBanner() {
       const banner = document.getElementById('warningBanner');
       const regionSelect = document.getElementById('filterRegion');
-      const materialSelect = document.getElementById('filterMaterial');
-
-      if (!state.selectedRegion || !state.selectedMaterial) {
+      const materialButton = document.getElementById('materialButton');
+      const hasMaterials = state.selectedMaterials.length > 0;
+      if (!state.selectedRegion || !hasMaterials) {
         banner.style.display = 'flex';
         regionSelect.classList.toggle('warning', !state.selectedRegion);
-        materialSelect.classList.toggle('warning', !state.selectedMaterial);
+        materialButton.classList.toggle('warning', !hasMaterials);
       } else {
         banner.style.display = 'none';
         regionSelect.classList.remove('warning');
-        materialSelect.classList.remove('warning');
+        materialButton.classList.remove('warning');
       }
+    }
+
+    function initTagLegend() {
+      const legend = document.getElementById('tagLegendGrid');
+      legend.innerHTML = Object.entries(DELIVERABLE_TAG_META).map(([key, value]) => `<div class="tag-legend-item"><span class="deliverable-tag ${key}">${value.abbr}</span><span>${value.name}</span></div>`).join('') +
+        '<div class="tag-legend-item"><span class="node-tag eng">ENG</span><span>Engineering role</span></div>' +
+        '<div class="tag-legend-item"><span class="node-tag bim">BIM</span><span>BIM/coordination role</span></div>';
     }
 
     // Initialize workflow
@@ -1354,213 +1598,87 @@
       const container = document.getElementById('workflowStages');
       const stages = ['Design Inputs', 'Design Execution', 'Design Outputs'];
       const stageClasses = ['inputs', 'execution', 'outputs'];
-
+      container.innerHTML = '';
       stages.forEach((stage, idx) => {
-        const stageNodes = workflowData.workflow.nodes.filter(n => n.stage === stage);
-        const stageHTML = `
-          <div class="workflow-stage">
-            <div class="stage-header ${stageClasses[idx]}">${stage}</div>
-            <div class="stage-nodes">
-              ${stageNodes.map(node => `
-                <div class="workflow-node" data-node-id="${node.id}">
-                  <div class="node-header">
-                    <span class="node-name">${node.name}</span>
-                    <div class="node-tags">
-                      ${node.staff_tags.map(tag => `<span class="node-tag ${tag.toLowerCase()}">${tag}</span>`).join('')}
-                    </div>
-                  </div>
-                  <div class="node-summary">${node.contents.slice(0, 2).join('; ')}${node.contents.length > 2 ? '...' : ''}</div>
-                  <div class="node-deliverables">
-                    ${node.deliverable_tags.map(tag => `<span class="deliverable-tag ${tag}" title="Deliverable ${tag}">${tag}</span>`).join('')}
-                  </div>
-                  ${node.notes ? `<div class="node-note"><i class="fas fa-info-circle"></i>${node.notes[0]}</div>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
+        const stageNodes = workflowData.workflow.nodes.filter((n) => n.stage === stage);
+        const stageHTML = `<div class="workflow-stage"><div class="stage-header ${stageClasses[idx]}">${stage}</div><div class="stage-nodes">${stageNodes.map((node) => `<div class="workflow-node" data-node-id="${node.id}"><div class="node-header"><span class="node-name">${node.name}</span><div class="node-tags">${node.staff_tags.map((tag) => `<span class="node-tag ${tag.toLowerCase()}">${tag}</span>`).join('')}</div></div><div class="node-summary">${node.contents.slice(0, 2).join('; ')}${node.contents.length > 2 ? '...' : ''}</div><div class="node-deliverables">${node.deliverable_tags.map((tag) => { const meta = DELIVERABLE_TAG_META[tag] || { abbr: tag, name: `Deliverable ${tag}` }; return `<span class="deliverable-tag ${tag}" title="${meta.abbr} — ${meta.name}">${meta.abbr}</span>`; }).join('')}</div>${node.notes ? `<div class="node-note"><i class="fas fa-info-circle"></i>${node.notes[0]}</div>` : ''}</div>`).join('')}</div></div>`;
         container.innerHTML += stageHTML;
       });
-
-      // Add click listeners to nodes
-      document.querySelectorAll('.workflow-node').forEach(node => {
+      document.querySelectorAll('.workflow-node').forEach((node) => {
         node.addEventListener('click', () => {
-          document.querySelectorAll('.workflow-node').forEach(n => n.classList.remove('selected'));
+          document.querySelectorAll('.workflow-node').forEach((n) => n.classList.remove('selected'));
           node.classList.add('selected');
           state.selectedNode = node.dataset.nodeId;
           updateContextPanel();
         });
       });
+      initTagLegend();
+    }
+
+    function goToSoftwareAndHighlight(softwareId) {
+      state.activeTab = 'software';
+      state.highlightSoftwareId = softwareId;
+      const tool = workflowData.software_catalog.find((s) => s.id === softwareId);
+      state.softwareSearch = tool ? tool.name.toLowerCase() : '';
+      document.getElementById('softwareSearch').value = tool ? tool.name : '';
+      setActiveTab('software');
+      renderSoftwareGrid();
+      setTimeout(() => {
+        const card = document.querySelector(`.software-card[data-software-id="${softwareId}"]`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 0);
     }
 
     function updateContextPanel() {
       const panel = document.getElementById('contextPanel');
-
       if (!state.selectedNode) {
-        panel.innerHTML = `
-          <div class="panel-empty">
-            <i class="fas fa-hand-pointer"></i>
-            <p>Select a workflow step to view details and software recommendations</p>
-          </div>
-        `;
+        panel.innerHTML = `<div class="panel-empty"><i class="fas fa-hand-pointer"></i><p>Select a workflow step to view details and software recommendations</p></div>`;
         return;
       }
 
-      const node = workflowData.workflow.nodes.find(n => n.id === state.selectedNode);
+      const node = workflowData.workflow.nodes.find((n) => n.id === state.selectedNode);
       if (!node) return;
 
-      const edges = workflowData.workflow.edges;
-      const incomingEdges = edges.filter(e => e.to === state.selectedNode);
-      const outgoingEdges = edges.filter(e => e.from === state.selectedNode);
+      const softwareIds = (nodeSoftwareMapping[state.selectedNode] || []).filter((id) => supportsTopFilters(id));
+      const software = softwareIds.map((id) => workflowData.software_catalog.find((s) => s.id === id)).filter(Boolean);
+      const coreSoftware = software.filter((s) => s.core);
+      const exceptionSoftware = software.filter((s) => s.exception);
+      const filtersComplete = state.selectedRegion && state.selectedMaterials.length > 0;
+      const categories = [...new Set(software.map((item) => item.category))];
 
-      const softwareIds = nodeSoftwareMapping[state.selectedNode] || [];
-      const software = softwareIds.map(id => workflowData.software_catalog.find(s => s.id === id)).filter(Boolean);
-      const coreSoftware = software.filter(s => s.core);
-      const exceptionSoftware = software.filter(s => s.exception);
+      panel.innerHTML = `<div class="panel-header"><div class="panel-title">${node.name}</div><div class="panel-subtitle">${node.stage}</div></div><div class="panel-content"><div class="panel-section"><div class="section-title"><i class="fas fa-clipboard-list"></i> Step Overview</div><p style="font-size:13px; color: var(--text-secondary); margin-bottom:10px;"><strong>Description:</strong> This step uses software categories for structured delivery and validation.</p><ul class="content-list">${categories.map((cat) => `<li>${cat.replace(/^\d+\)\s*/, '')}: ${CATEGORY_DESCRIPTIONS[cat] || 'Category capability context.'}</li>`).join('')}</ul><p style="font-size:13px; color: var(--text-secondary); margin:12px 0 6px;"><strong>Capabilities</strong></p><ul class="content-list">${node.contents.map((c) => `<li>${c}</li>`).join('')}</ul></div><div class="panel-section"><div class="section-title"><i class="fas fa-cube"></i> Recommended Software</div>${!filtersComplete ? `<div class="empty-state" style="padding: 24px;"><i class="fas fa-filter" style="font-size: 24px;"></i><p style="font-size: 13px;">Select Region and at least one Material to view recommendations</p></div>` : software.length === 0 ? `<div class="empty-state" style="padding: 24px;"><i class="fas fa-inbox" style="font-size: 24px;"></i><p style="font-size: 13px;">No results returned under the current filters</p></div>` : `${coreSoftware.map((s) => `<div class="software-item" data-software-id="${s.id}"><div class="software-info"><div class="software-icon">${s.name.charAt(0)}</div><div><div class="software-name">${s.name}</div><div class="software-category">${s.category.replace(/^\d+\)\s*/, '')}</div></div></div><span class="software-badge core">Core</span></div>`).join('')}${exceptionSoftware.map((s) => `<div class="software-item" data-software-id="${s.id}"><div class="software-info"><div class="software-icon">${s.name.charAt(0)}</div><div><div class="software-name">${s.name}</div><div class="software-category">${s.category.replace(/^\d+\)\s*/, '')}</div></div></div><span class="software-badge exception">Exception</span></div>`).join('')}`}</div></div>`;
 
-      const filtersComplete = state.selectedRegion && state.selectedMaterial;
-
-      panel.innerHTML = `
-        <div class="panel-header">
-          <div class="panel-title">${node.name}</div>
-          <div class="panel-subtitle">${node.stage}</div>
-        </div>
-        <div class="panel-content">
-          <div class="panel-section">
-            <div class="section-title"><i class="fas fa-clipboard-list"></i> Step Overview</div>
-            <ul class="content-list">
-              ${node.contents.map(c => `<li>${c}</li>`).join('')}
-            </ul>
-          </div>
-
-          <div class="panel-section">
-            <div class="section-title"><i class="fas fa-cube"></i> Recommended Software</div>
-            ${!filtersComplete ? `
-              <div class="empty-state" style="padding: 24px;">
-                <i class="fas fa-filter" style="font-size: 24px;"></i>
-                <p style="font-size: 13px;">Select Region and Material to view recommendations</p>
-              </div>
-            ` : software.length === 0 ? `
-              <div class="empty-state" style="padding: 24px;">
-                <i class="fas fa-inbox" style="font-size: 24px;"></i>
-                <p style="font-size: 13px;">No results returned under the current filters</p>
-                <a href="#">Contact steward</a>
-              </div>
-            ` : `
-              <div class="toggle-row">
-                <div class="toggle ${state.includeExceptions ? 'active' : ''}" id="panelExceptionsToggle"></div>
-                <span class="toggle-label">Show Exceptions</span>
-              </div>
-              ${coreSoftware.map(s => `
-                <div class="software-item">
-                  <div class="software-info">
-                    <div class="software-icon">${s.name.charAt(0)}</div>
-                    <div>
-                      <div class="software-name">${s.name}</div>
-                      <div class="software-category">${s.category.replace(/^\d+\)\s*/, '')}</div>
-                    </div>
-                  </div>
-                  <span class="software-badge core">Core</span>
-                </div>
-              `).join('')}
-              <div id="exceptionSoftwareList" style="${state.includeExceptions ? '' : 'display: none;'}">
-                ${exceptionSoftware.map(s => `
-                  <div class="software-item">
-                    <div class="software-info">
-                      <div class="software-icon">${s.name.charAt(0)}</div>
-                      <div>
-                        <div class="software-name">${s.name}</div>
-                        <div class="software-category">${s.category.replace(/^\d+\)\s*/, '')}</div>
-                      </div>
-                    </div>
-                    <span class="software-badge exception">Exception</span>
-                  </div>
-                `).join('')}
-              </div>
-            `}
-          </div>
-
-          <div class="panel-section">
-            <div class="section-title"><i class="fas fa-link"></i> Related Steps</div>
-            ${incomingEdges.length === 0 && outgoingEdges.length === 0 ? '<p style="font-size: 13px; color: var(--text-muted);">No related steps</p>' : ''}
-            ${incomingEdges.map(e => {
-              const fromNode = workflowData.workflow.nodes.find(n => n.id === e.from);
-              return `
-                <div class="related-step ${e.type}">
-                  <i class="fas fa-arrow-left"></i>
-                  <span><strong>${fromNode?.name || e.from}</strong> → ${e.type}</span>
-                </div>
-              `;
-            }).join('')}
-            ${outgoingEdges.map(e => {
-              const toNode = workflowData.workflow.nodes.find(n => n.id === e.to);
-              return `
-                <div class="related-step ${e.type}">
-                  <i class="fas fa-arrow-right"></i>
-                  <span>${e.type} → <strong>${toNode?.name || e.to}</strong></span>
-                </div>
-              `;
-            }).join('')}
-          </div>
-
-          <div class="panel-section">
-            <div class="section-title"><i class="fas fa-user-tie"></i> Tool Stewards & Training</div>
-            <p style="font-size: 13px; color: var(--text-muted);">Contact your regional design technology lead for steward information and training resources.</p>
-          </div>
-        </div>
-      `;
-
-      // Add toggle listener
-      const toggle = document.getElementById('panelExceptionsToggle');
-      if (toggle) {
-        toggle.addEventListener('click', () => {
-          state.includeExceptions = !state.includeExceptions;
-          toggle.classList.toggle('active', state.includeExceptions);
-          const list = document.getElementById('exceptionSoftwareList');
-          if (list) {
-            list.style.display = state.includeExceptions ? '' : 'none';
-          }
-        });
-      }
+      panel.querySelectorAll('.software-item').forEach((el) => {
+        el.addEventListener('click', () => goToSoftwareAndHighlight(el.dataset.softwareId));
+      });
     }
 
     // Initialize Software Tab
     function initSoftwareTab() {
-      const categories = [...new Set(workflowData.software_catalog.map(s => s.category))];
+      const categories = [...new Set(workflowData.software_catalog.map((s) => s.category))];
       const chipsContainer = document.getElementById('categoryChips');
-
-      chipsContainer.innerHTML = `<button class="filter-chip active" data-category="">All</button>`;
-      categories.forEach(cat => {
-        const shortName = cat.replace(/^\d+\)\s*/, '');
-        chipsContainer.innerHTML += `<button class="filter-chip" data-category="${cat}">${shortName}</button>`;
+      chipsContainer.innerHTML = '<button class="filter-chip active" data-category="">All</button>';
+      categories.forEach((cat) => {
+        chipsContainer.innerHTML += `<button class="filter-chip" data-category="${cat}">${cat.replace(/^\d+\)\s*/, '')}</button>`;
       });
 
-      // Category chip listeners
-      document.querySelectorAll('#categoryChips .filter-chip').forEach(chip => {
+      document.querySelectorAll('#categoryChips .filter-chip').forEach((chip) => {
         chip.addEventListener('click', () => {
-          document.querySelectorAll('#categoryChips .filter-chip').forEach(c => c.classList.remove('active'));
+          document.querySelectorAll('#categoryChips .filter-chip').forEach((c) => c.classList.remove('active'));
           chip.classList.add('active');
           state.selectedCategory = chip.dataset.category;
           renderSoftwareGrid();
         });
       });
 
-      // Search listener
       document.getElementById('softwareSearch').addEventListener('input', (e) => {
         state.softwareSearch = e.target.value.toLowerCase();
         renderSoftwareGrid();
       });
 
-      // Toggle listeners
-      document.getElementById('coreOnlyToggle').addEventListener('click', function() {
-        state.coreOnly = !state.coreOnly;
-        this.classList.toggle('active', state.coreOnly);
-        renderSoftwareGrid();
-      });
-
-      document.getElementById('includeExceptionsToggle').addEventListener('click', function() {
-        state.includeExceptions = !state.includeExceptions;
-        this.classList.toggle('active', state.includeExceptions);
+      document.getElementById('coreOnlyToggle').addEventListener('click', function () {
+        state.showCoreStack = !state.showCoreStack;
+        this.classList.toggle('active', state.showCoreStack);
         renderSoftwareGrid();
       });
 
@@ -1569,74 +1687,46 @@
 
     function renderSoftwareGrid() {
       const grid = document.getElementById('softwareGrid');
-      let filtered = workflowData.software_catalog;
-
-      if (state.softwareSearch) {
-        filtered = filtered.filter(s => s.name.toLowerCase().includes(state.softwareSearch));
-      }
-
-      if (state.selectedCategory) {
-        filtered = filtered.filter(s => s.category === state.selectedCategory);
-      }
-
-      if (state.coreOnly) {
-        filtered = filtered.filter(s => s.core);
-      }
-
-      if (!state.includeExceptions) {
-        filtered = filtered.filter(s => !s.exception);
-      }
-
-      // Sort by usage
-      filtered.sort((a, b) => (b.survey_usage || 0) - (a.survey_usage || 0));
+      let filtered = workflowData.software_catalog.slice();
+      filtered = filtered.filter((s) => supportsTopFilters(s.id));
+      if (state.softwareSearch) filtered = filtered.filter((s) => s.name.toLowerCase().includes(state.softwareSearch));
+      if (state.selectedCategory) filtered = filtered.filter((s) => s.category === state.selectedCategory);
+      if (state.showCoreStack) filtered = filtered.filter((s) => s.core || s.exception);
+      filtered.sort((a, b) => {
+        const aCore = a.core || a.exception ? 1 : 0;
+        const bCore = b.core || b.exception ? 1 : 0;
+        if (aCore !== bCore) return bCore - aCore;
+        return a.name.localeCompare(b.name);
+      });
 
       if (filtered.length === 0) {
-        grid.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">
-            <i class="fas fa-search"></i>
-            <p>No software matches your filters</p>
-          </div>
-        `;
+        grid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-search"></i><p>No software matches your filters</p></div>';
         return;
       }
 
-      grid.innerHTML = filtered.map(s => `
-        <div class="software-card animate-in">
-          <div class="software-card-header">
-            <div class="software-card-icon">${s.name.charAt(0)}</div>
-            <div style="display: flex; gap: 6px;">
-              ${s.core ? '<span class="software-badge core">Core</span>' : ''}
-              ${s.exception ? '<span class="software-badge exception">Exception</span>' : ''}
-            </div>
-          </div>
-          <div class="software-card-title">${s.name}</div>
-          <div class="software-card-meta">${s.category.replace(/^\d+\)\s*/, '')}</div>
-          ${s.survey_usage !== null ? `
-            <div class="usage-bar">
-              <div class="usage-label">
-                <span>Survey Usage</span>
-                <span>${Math.round(s.survey_usage * 100)}%</span>
-              </div>
-              <div class="usage-track">
-                <div class="usage-fill" style="width: ${s.survey_usage * 100}%"></div>
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      `).join('');
+      grid.innerHTML = filtered.map((s) => `<div class="software-card animate-in ${state.highlightSoftwareId === s.id ? 'highlighted' : ''}" data-software-id="${s.id}"><div class="software-card-header"><div class="software-card-icon">${s.name.charAt(0)}</div><div style="display: flex; gap: 6px;">${s.core ? '<span class="software-badge core">Core</span>' : ''}${s.exception ? '<span class="software-badge exception">Exception</span>' : ''}</div></div><div class="software-card-title">${s.name}</div><div class="software-card-meta">${s.category.replace(/^\d+\)\s*/, '')}</div></div>`).join('');
+
+      grid.querySelectorAll('.software-card').forEach((card) => {
+        card.addEventListener('click', () => console.log(`Software sidebar deferred: ${card.dataset.softwareId}`));
+      });
+    }
+
+    function renderToolsTab() {
+      const grid = document.getElementById('toolsGrid');
+      grid.innerHTML = TOOLS_INTEGRATIONS.map((tool) => `<div class="software-card animate-in"><div class="software-card-header"><div class="software-card-icon"><i class="fas fa-tools"></i></div></div><div class="software-card-title">${tool.title}</div><div class="software-card-meta">${tool.value}</div><ul class="content-list" style="margin-top: 10px;">${tool.bullets.map((b) => `<li>${b}</li>`).join('')}</ul><p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"><strong>Deliverables:</strong> ${tool.deliverables.join('; ')}</p><p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"><strong>Success Measures:</strong> ${tool.success.join('; ')}</p><p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"><strong>Risks:</strong> ${tool.risks.join('; ')}</p></div>`).join('');
+    }
+
+    function setActiveTab(tab) {
+      state.activeTab = tab;
+      document.querySelectorAll('.nav-tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
+      document.querySelectorAll('.tab-content').forEach((c) => c.classList.toggle('active', c.id === `${tab}Tab`));
+      if (tab === 'software') renderSoftwareGrid();
     }
 
     // Tab switching
     function initTabs() {
-      document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          const tabId = tab.dataset.tab;
-          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          document.getElementById(`${tabId}Tab`).classList.add('active');
-          state.activeTab = tabId;
-        });
+      document.querySelectorAll('.nav-tab').forEach((tab) => {
+        tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
       });
     }
 
@@ -1646,6 +1736,7 @@
       initWorkflow();
       initSoftwareTab();
       initTabs();
+      renderToolsTab();
       updateWarningBanner();
     });
   </script>
