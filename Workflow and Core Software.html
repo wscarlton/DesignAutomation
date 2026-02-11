@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Software Stack | Structural Engineering Workflow</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      --accent-blue: #3b82f6;
+      --accent-blue-light: #dbeafe;
+      --accent-green: #10b981;
+      --accent-green-light: #d1fae5;
+      --accent-orange: #f59e0b;
+      --accent-orange-light: #fef3c7;
+      --accent-purple: #8b5cf6;
+      --accent-purple-light: #ede9fe;
+      --accent-red: #ef4444;
+      --accent-red-light: #fee2e2;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    .dark {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --accent-blue-light: rgba(59, 130, 246, 0.2);
+      --accent-green-light: rgba(16, 185, 129, 0.2);
+      --accent-orange-light: rgba(245, 158, 11, 0.2);
+      --accent-purple-light: rgba(139, 92, 246, 0.2);
+      --accent-red-light: rgba(239, 68, 68, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-tertiary);
+      padding: 4px;
+      border-radius: var(--radius-md);
+    }
+
+    .nav-tab {
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .nav-tab.active {
+      background: var(--bg-secondary);
+      color: var(--accent-blue);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-tab.placeholder {
+      opacity: 0.5;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+    }
+
+    .filter-content {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .filter-label.required::after {
+      content: '*';
+      color: var(--accent-red);
+    }
+
+    .filter-select {
+      padding: 10px 36px 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      min-width: 180px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-blue-light);
+    }
+
+    .filter-select.warning {
+      border-color: var(--accent-orange);
+    }
+
+    .warning-banner {
+      background: var(--accent-orange-light);
+      border: 1px solid var(--accent-orange);
+      color: var(--text-primary);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .warning-banner i {
+      color: var(--accent-orange);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Workflow Tab */
+    .workflow-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .workflow-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .workflow-map {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .workflow-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .workflow-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .workflow-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .legend-line {
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    .legend-line.advancement { background: var(--accent-blue); }
+    .legend-line.iteration { background: var(--accent-orange); border-style: dashed; }
+    .legend-line.handoff { background: var(--accent-purple); }
+
+    .workflow-stages {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+
+    .workflow-stage {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .stage-header {
+      padding: 12px 16px;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .stage-header.inputs {
+      background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+      color: #3730a3;
+    }
+
+    .dark .stage-header.inputs {
+      background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(99,102,241,0.3));
+      color: #93c5fd;
+    }
+
+    .stage-header.execution {
+      background: linear-gradient(135deg, #d1fae5, #cffafe);
+      color: #065f46;
+    }
+
+    .dark .stage-header.execution {
+      background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(6,182,212,0.3));
+      color: #6ee7b7;
+    }
+
+    .stage-header.outputs {
+      background: linear-gradient(135deg, #fef3c7, #fee2e2);
+      color: #92400e;
+    }
+
+    .dark .stage-header.outputs {
+      background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(239,68,68,0.3));
+      color: #fcd34d;
+    }
+
+    .stage-nodes {
+      background: var(--bg-tertiary);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 400px;
+    }
+
+    .workflow-node {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .workflow-node:hover {
+      border-color: var(--accent-blue);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .workflow-node.selected {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-blue-light);
+    }
+
+    .node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .node-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .node-tags {
+      display: flex;
+      gap: 4px;
+    }
+
+    .node-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .node-tag.eng {
+      background: var(--accent-blue-light);
+      color: var(--accent-blue);
+    }
+
+    .node-tag.bim {
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+    }
+
+    .node-summary {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .node-deliverables {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .deliverable-tag {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      border: 2px solid;
+    }
+
+    .deliverable-tag.A { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+    .deliverable-tag.B { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+    .deliverable-tag.C { background: #d1fae5; border-color: #10b981; color: #065f46; }
+    .deliverable-tag.D { background: #ede9fe; border-color: #8b5cf6; color: #5b21b6; }
+    .deliverable-tag.E { background: #fce7f3; border-color: #ec4899; color: #9d174d; }
+    .deliverable-tag.F { background: #e0e7ff; border-color: #6366f1; color: #3730a3; }
+
+    /* Context Panel */
+    .context-panel {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .panel-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .panel-empty {
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .panel-empty i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .panel-content {
+      max-height: calc(100vh - 300px);
+      overflow-y: auto;
+    }
+
+    .panel-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title i {
+      font-size: 14px;
+    }
+
+    .content-list {
+      list-style: none;
+    }
+
+    .content-list li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .content-list li::before {
+      content: '•';
+      color: var(--accent-blue);
+      font-weight: bold;
+    }
+
+    /* Software List */
+    .software-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+
+    .software-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .software-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    .software-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .software-category {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .software-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .software-badge.core {
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+    }
+
+    .software-badge.exception {
+      background: var(--accent-orange-light);
+      color: var(--accent-orange);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .toggle {
+      width: 44px;
+      height: 24px;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid var(--border-color);
+    }
+
+    .toggle.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toggle.active::after {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Related Steps */
+    .related-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .related-step i {
+      font-size: 12px;
+    }
+
+    .related-step.advancement { border-left: 3px solid var(--accent-blue); }
+    .related-step.iteration { border-left: 3px solid var(--accent-orange); }
+    .related-step.handoff { border-left: 3px solid var(--accent-purple); }
+
+    /* Software Tab */
+    .software-tab-container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .software-tab-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .software-filters {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 12px 12px 42px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-blue-light);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-chip {
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .filter-chip.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: white;
+    }
+
+    .software-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .software-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .software-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .software-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .software-card-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .software-card-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .software-card-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .usage-bar {
+      margin-top: 16px;
+    }
+
+    .usage-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .usage-track {
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .usage-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Placeholder tabs */
+    .placeholder-content {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 60px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .placeholder-content i {
+      font-size: 64px;
+      color: var(--text-muted);
+      opacity: 0.3;
+      margin-bottom: 20px;
+    }
+
+    .placeholder-content h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .placeholder-content p {
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state p {
+      margin-bottom: 16px;
+    }
+
+    .empty-state a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-muted);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-tabs {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-select {
+        width: 100%;
+      }
+
+      .workflow-stages {
+        flex-direction: column;
+      }
+
+      .workflow-stage {
+        min-width: 100%;
+      }
+
+      .context-panel {
+        position: static;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    /* Note tooltip */
+    .node-note {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: var(--accent-blue-light);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-cubes"></i>
+        </div>
+        <div>
+          <div class="logo-text">Core Software Stack</div>
+          <div class="logo-subtitle">Structural Engineering Workflow</div>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="workflow">
+          <i class="fas fa-project-diagram"></i>
+          Workflow
+        </button>
+        <button class="nav-tab" data-tab="software">
+          <i class="fas fa-th-large"></i>
+          Software
+        </button>
+        <button class="nav-tab placeholder" data-tab="tools">
+          <i class="fas fa-puzzle-piece"></i>
+          Tools & Integrations
+        </button>
+        <button class="nav-tab placeholder" data-tab="guidance">
+          <i class="fas fa-book"></i>
+          Guidance
+        </button>
+        <button class="nav-tab placeholder" data-tab="about">
+          <i class="fas fa-info-circle"></i>
+          About
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-content">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label class="filter-label required">Region</label>
+          <select id="filterRegion" class="filter-select">
+            <option value="">Select Region</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label required">Material</label>
+          <select id="filterMaterial" class="filter-select">
+            <option value="">Select Material</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">System</label>
+          <select id="filterSystem" class="filter-select">
+            <option value="">All Systems</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Analysis Type</label>
+          <select id="filterAnalysis" class="filter-select">
+            <option value="">All Types</option>
+          </select>
+        </div>
+      </div>
+      <div id="warningBanner" class="warning-banner" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Please select both Region and Material to view software recommendations.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Workflow Tab -->
+    <div id="workflowTab" class="tab-content active">
+      <div class="workflow-container">
+        <div class="workflow-map">
+          <div class="workflow-header">
+            <h2 class="workflow-title">Structural Engineering Workflow</h2>
+            <div class="workflow-legend">
+              <div class="legend-item">
+                <div class="legend-line advancement"></div>
+                <span>Advancement</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-line iteration" style="border-top: 3px dashed var(--accent-orange); height: 0;"></div>
+                <span>Iteration</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-line handoff"></div>
+                <span>Handoff</span>
+              </div>
+            </div>
+          </div>
+          <div class="workflow-stages" id="workflowStages">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="context-panel" id="contextPanel">
+          <div class="panel-empty">
+            <i class="fas fa-hand-pointer"></i>
+            <p>Select a workflow step to view details and software recommendations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Software Tab -->
+    <div id="softwareTab" class="tab-content">
+      <div class="software-tab-container">
+        <div class="software-filters">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="softwareSearch" placeholder="Search software...">
+          </div>
+          <div class="filter-section">
+            <div class="filter-section-title">Category</div>
+            <div class="filter-chips" id="categoryChips">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          <div class="filter-section">
+            <div class="toggle-row">
+              <div class="toggle" id="coreOnlyToggle"></div>
+              <span class="toggle-label">Show Core Only</span>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle active" id="includeExceptionsToggle"></div>
+              <span class="toggle-label">Include Exceptions</span>
+            </div>
+          </div>
+        </div>
+        <div class="software-grid" id="softwareGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Placeholder Tabs -->
+    <div id="toolsTab" class="tab-content">
+      <div class="placeholder-content">
+        <i class="fas fa-puzzle-piece"></i>
+        <h2>Tools & Integrations</h2>
+        <p>Custom tools and integrations that augment the core software stack. Coming soon.</p>
+      </div>
+    </div>
+
+    <div id="guidanceTab" class="tab-content">
+      <div class="placeholder-content">
+        <i class="fas fa-book"></i>
+        <h2>Guidance</h2>
+        <p>Best practices, tutorials, and documentation for using the structural engineering workflow. Coming soon.</p>
+      </div>
+    </div>
+
+    <div id="aboutTab" class="tab-content">
+      <div class="placeholder-content">
+        <i class="fas fa-info-circle"></i>
+        <h2>About</h2>
+        <p>Information about the Core Software Stack initiative and how to contribute. Coming soon.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Data from JSON
+    const workflowData = {
+      filters: {
+        regions: ["US", "Canada", "Europe (Eurocode)", "Australia / New Zealand", "India", "Other"],
+        systems: ["Gravity", "Lateral"],
+        analysis_types: ["Linear-Static", "Non-Linear", "Modal Response", "Dynamic / Vibration", "Staged Construction"],
+        materials: {
+          "Steel": ["Non-composite", "Composite", "Fabricated elements (Joists, etc)", "Decking"],
+          "Concrete": ["Mild reinforced", "Post-tensioned", "Precast"],
+          "Masonry": ["CMU"],
+          "Wood": ["Decking (Plywood, T&G, etc)", "Dimensional lumber", "Engineered framing (LVL, etc)", "Mass timber elements (CLT, etc)"],
+          "Other": []
+        }
+      },
+      workflow: {
+        nodes: [
+          { id: "scope_definition", stage: "Design Inputs", name: "Scope Definition", staff_tags: ["ENG"], deliverable_tags: ["A"], contents: ["Structural Scope (building, infrastructure, etc)", "Third-Party Partnerships", "Delegated/ Deferred Scope"] },
+          { id: "structural_criteria", stage: "Design Inputs", name: "Structural Criteria", staff_tags: ["ENG"], deliverable_tags: ["A", "B", "F"], contents: ["Location", "Codes, Standards, & Requirements", "Materials", "Performance Criteria", "Load Definition", "Load Cases", "Load Combinations"] },
+          { id: "spacial_inputs", stage: "Design Inputs", name: "Spatial Inputs", staff_tags: ["BIM", "ENG"], deliverable_tags: ["E"], contents: ["Overall Structure Size", "Layout (grid spacing, etc)", "Verticality (height, stories, below grade, etc)"] },
+          { id: "structural_selections", stage: "Design Inputs", name: "Structural Selections", staff_tags: ["ENG"], deliverable_tags: ["B", "D", "E"], contents: ["Framing Systems", "Vertical Elements (columns, walls)", "Horizontal Elements (beams, slabs)", "Lateral Systems", "Foundation Systems", "Geotechnical Coordination"] },
+          { id: "validation", stage: "Design Inputs", name: "Validation", staff_tags: ["ENG"], deliverable_tags: ["C"], contents: ["Rules of Thumb", "Similar Projects/ Practices", "Conceptual Validation", "Cost/ Constructability Consideration"] },
+          { id: "general_analysis", stage: "Design Execution", name: "General Analysis", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Primary structural software for modeling, analysis, and design"], contents: ["Template/ Presets", "Model Development", "Grids/ Overall Setup", "Element Modeling", "Load Application", "Model Analysis", "Initial Performance Validation"] },
+          { id: "element_design", stage: "Design Execution", name: "Element Design", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Often in primary model; sometimes requires additional software"], contents: ["Columns", "Beams, Girders, etc", "Slabs, Decks", "Walls (including openings, boundary elements)", "Bracing/ Frame Elements", "Transfer Elements", "Special Elements (Trusses, Outriggers, etc)"] },
+          { id: "component_connection_design", stage: "Design Execution", name: "Component/ Connection Design", staff_tags: ["ENG"], deliverable_tags: ["C"], notes: ["Connection design rarely in primary engineering model(s)"], contents: ["Deck/ Diaphragm", "Beam to Beam", "Beam to Column", "Beam to Wall", "Column Base Plate", "Bracing to Framing", "Misc Detail Connections"] },
+          { id: "foundation_design", stage: "Design Execution", name: "Foundation Design", staff_tags: ["ENG"], deliverable_tags: ["C"], contents: ["Slab-on-Grade", "Grade Beams", "Walls", "Isolated Footings", "Combined Footings", "Mat/ Raft Foundations", "Drilled Piers", "Driven Piles/ Piers", "Pile Caps"] },
+          { id: "production_model_management", stage: "Design Execution", name: "Production Model Management", staff_tags: ["BIM", "ENG"], deliverable_tags: ["D", "E"], notes: ["Intentionally simplified"], contents: ["Structural markups (ENG <-> BIM loop)", "Interdisciplinary Coordination", "Drawing Generation"] },
+          { id: "structural_reports_exports", stage: "Design Outputs", name: "Structural Reports/ Exports", staff_tags: ["ENG"], deliverable_tags: ["C"], contents: ["Raw Data Output (database)", "Calculation/ Model Reports", "Design Output/ Reporting"] },
+          { id: "structural_schedules", stage: "Design Outputs", name: "Structural Schedules", staff_tags: ["ENG"], deliverable_tags: ["C"], contents: ["Beam Schedule", "Column Schedule", "Wall Schedule", "Bracing Schedule", "Connection Schedule", "Foundation Schedules"] },
+          { id: "production_model_drawing_deliverables", stage: "Design Outputs", name: "Production Model/ Drawing Deliverables", staff_tags: ["BIM", "ENG"], deliverable_tags: ["D", "E"], contents: ["Drawings (PDF)", "Schedules (quantities, etc)", "Reports (clashes, etc)", "Native file deliverable (CAD, RVT)"] }
+        ],
+        edges: [
+          { from: "structural_criteria", to: "structural_selections", type: "advancement" },
+          { from: "spacial_inputs", to: "structural_selections", type: "advancement" },
+          { from: "structural_selections", to: "validation", type: "advancement" },
+          { from: "validation", to: "general_analysis", type: "advancement" },
+          { from: "general_analysis", to: "element_design", type: "advancement" },
+          { from: "general_analysis", to: "component_connection_design", type: "advancement" },
+          { from: "general_analysis", to: "foundation_design", type: "advancement" },
+          { from: "element_design", to: "component_connection_design", type: "advancement" },
+          { from: "general_analysis", to: "structural_reports_exports", type: "advancement" },
+          { from: "component_connection_design", to: "structural_schedules", type: "advancement" },
+          { from: "production_model_management", to: "production_model_drawing_deliverables", type: "advancement" },
+          { from: "element_design", to: "structural_reports_exports", type: "advancement" },
+          { from: "general_analysis", to: "validation", type: "iteration" },
+          { from: "element_design", to: "general_analysis", type: "iteration" },
+          { from: "component_connection_design", to: "general_analysis", type: "iteration" },
+          { from: "foundation_design", to: "general_analysis", type: "iteration" },
+          { from: "validation", to: "structural_selections", type: "iteration" },
+          { from: "production_model_management", to: "general_analysis", type: "iteration" },
+          { from: "spacial_inputs", to: "production_model_management", type: "handoff" },
+          { from: "general_analysis", to: "production_model_management", type: "handoff" },
+          { from: "component_connection_design", to: "production_model_management", type: "handoff" },
+          { from: "structural_schedules", to: "production_model_drawing_deliverables", type: "handoff" },
+          { from: "structural_selections", to: "production_model_management", type: "handoff" },
+          { from: "element_design", to: "production_model_management", type: "handoff" },
+          { from: "foundation_design", to: "production_model_management", type: "handoff" }
+        ]
+      },
+      software_catalog: [
+        { id: "revit", name: "Revit", category: "1) Production & Coordination", survey_usage: 0.959, core: true, exception: false },
+        { id: "dynamo", name: "Dynamo", category: "1) Production & Coordination", survey_usage: 0.271, core: false, exception: false },
+        { id: "autocad", name: "AutoCAD", category: "1) Production & Coordination", survey_usage: 0.405, core: false, exception: false },
+        { id: "aecosim", name: "AECOSIM", category: "1) Production & Coordination", survey_usage: 0.285, core: true, exception: false },
+        { id: "openbuild", name: "OpenBuild", category: "1) Production & Coordination", survey_usage: 0.119, core: false, exception: false },
+        { id: "sketchup", name: "SketchUP", category: "1) Production & Coordination", survey_usage: 0.038, core: false, exception: false },
+        { id: "s3d", name: "S3D", category: "1) Production & Coordination", survey_usage: 0.032, core: false, exception: false },
+        { id: "navisworks", name: "Navisworks", category: "1) Production & Coordination", survey_usage: 0.818, core: true, exception: false },
+        { id: "revizto", name: "Revizto", category: "1) Production & Coordination", survey_usage: 0.405, core: false, exception: true },
+        { id: "bluebeam_revu", name: "Bluebeam Revu", category: "1) Production & Coordination", survey_usage: 0.169, core: true, exception: false },
+        { id: "staad_pro", name: "STAAD.Pro", category: "2) General Design", survey_usage: 0.776, core: true, exception: false },
+        { id: "etabs", name: "ETABS", category: "2) General Design", survey_usage: 0.657, core: true, exception: false },
+        { id: "sap2000", name: "SAP2000", category: "2) General Design", survey_usage: 0.628, core: true, exception: false },
+        { id: "ram_structural_system", name: "RAM Structural System", category: "2) General Design", survey_usage: 0.598, core: true, exception: false },
+        { id: "autodesk_robot", name: "Autodesk Robot", category: "2) General Design", survey_usage: 0.492, core: false, exception: true },
+        { id: "ram_concept", name: "RAM Concept", category: "2) General Design", survey_usage: 0.408, core: false, exception: true },
+        { id: "ram_elements", name: "RAM Elements", category: "2) General Design", survey_usage: 0.332, core: false, exception: true },
+        { id: "visual_analysis", name: "Visual Analysis", category: "2) General Design", survey_usage: 0.274, core: false, exception: false },
+        { id: "risa_3d", name: "RISA 3D", category: "2) General Design", survey_usage: 0.166, core: false, exception: true },
+        { id: "spacegass", name: "Spacegass", category: "2) General Design", survey_usage: 0.131, core: false, exception: true },
+        { id: "risa_floor", name: "RISA Floor", category: "2) General Design", survey_usage: 0.084, core: false, exception: false },
+        { id: "tekla_structural_designer", name: "Tekla Structural Designer", category: "2) General Design", survey_usage: 0.038, core: false, exception: false },
+        { id: "adapt_pt_rc", name: "ADAPT-PT/RC", category: "3) Element Design", survey_usage: 0.134, core: true, exception: false },
+        { id: "rapt", name: "RAPT", category: "3) Element Design", survey_usage: 0.131, core: false, exception: true },
+        { id: "altair_s_concrete", name: "Altair S-CONCRETE", category: "3) Element Design", survey_usage: 0.166, core: false, exception: true },
+        { id: "spcolumn", name: "spColumn", category: "3) Element Design", survey_usage: 0.166, core: false, exception: false },
+        { id: "spbeam", name: "spBeam", category: "3) Element Design", survey_usage: 0.032, core: false, exception: false },
+        { id: "ram_sbeam", name: "RAM SBeam", category: "3) Element Design", survey_usage: 0.218, core: true, exception: false },
+        { id: "hilti_profis", name: "Hilti PROFIS Engineering", category: "4) Components/ Connections", survey_usage: 0.807, core: true, exception: false },
+        { id: "ram_connection", name: "RAM Connection", category: "4) Components/ Connections", survey_usage: 0.589, core: true, exception: false },
+        { id: "idea_statica", name: "IDEA StatiCa", category: "4) Components/ Connections", survey_usage: 0.283, core: false, exception: true },
+        { id: "risa_connection", name: "RISA Connection", category: "4) Components/ Connections", survey_usage: 0.032, core: false, exception: false },
+        { id: "sds_2", name: "SDS/2", category: "4) Components/ Connections", survey_usage: 0.032, core: false, exception: false },
+        { id: "safe", name: "SAFE", category: "5) Foundation Design", survey_usage: 0.348, core: true, exception: false },
+        { id: "staad_foundation", name: "STAAD Foundation Advanced", category: "5) Foundation Design", survey_usage: 0.114, core: true, exception: false },
+        { id: "risa_foundation", name: "RISA Foundation", category: "5) Foundation Design", survey_usage: 0.084, core: false, exception: true },
+        { id: "lpile", name: "LPile", category: "5) Foundation Design", survey_usage: 0.032, core: true, exception: false },
+        { id: "spmat", name: "spMat", category: "5) Foundation Design", survey_usage: 0.032, core: false, exception: true },
+        { id: "tekla_tedds", name: "Tekla Tedds", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.755, core: true, exception: false },
+        { id: "mathcad", name: "Mathcad", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.369, core: true, exception: false },
+        { id: "ies_shape_builder", name: "IES Shape Builder", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.166, core: false, exception: false },
+        { id: "structural_tool_kit", name: "Structural Tool Kit", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.131, core: false, exception: false },
+        { id: "checkwind", name: "CheckWind", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.131, core: false, exception: false },
+        { id: "enercal", name: "ENERCAL", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.052, core: false, exception: false },
+        { id: "strucalc", name: "StruCalc", category: "6) Engineering Calculation & Custom Solutions", survey_usage: 0.032, core: false, exception: false },
+        { id: "codesearch", name: "CodeSearch", category: "6) Engineering Calculation & Custom Solutions", survey_usage: null, core: true, exception: false }
+      ]
+    };
+
+    // Node-to-software mapping (simplified for demo)
+    const nodeSoftwareMapping = {
+      general_analysis: ["staad_pro", "etabs", "sap2000", "ram_structural_system", "autodesk_robot", "risa_3d"],
+      element_design: ["ram_sbeam", "adapt_pt_rc", "spcolumn", "altair_s_concrete", "rapt"],
+      component_connection_design: ["hilti_profis", "ram_connection", "idea_statica", "risa_connection"],
+      foundation_design: ["safe", "staad_foundation", "lpile", "risa_foundation", "spmat"],
+      production_model_management: ["revit", "aecosim", "navisworks", "dynamo", "autocad"],
+      structural_reports_exports: ["tekla_tedds", "mathcad", "bluebeam_revu"],
+      structural_schedules: ["revit", "tekla_tedds", "mathcad"],
+      production_model_drawing_deliverables: ["revit", "aecosim", "navisworks", "bluebeam_revu", "autocad"],
+      validation: ["tekla_tedds", "mathcad", "checkwind"],
+      structural_criteria: ["codesearch", "mathcad"],
+      structural_selections: ["tekla_tedds", "mathcad"]
+    };
+
+    // State
+    let state = {
+      selectedNode: null,
+      selectedRegion: '',
+      selectedMaterial: '',
+      selectedSystem: '',
+      selectedAnalysis: '',
+      activeTab: 'workflow',
+      softwareSearch: '',
+      selectedCategory: '',
+      coreOnly: false,
+      includeExceptions: true
+    };
+
+    // Dark mode detection
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      if (event.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    });
+
+    // Initialize filters
+    function initFilters() {
+      const regionSelect = document.getElementById('filterRegion');
+      const materialSelect = document.getElementById('filterMaterial');
+      const systemSelect = document.getElementById('filterSystem');
+      const analysisSelect = document.getElementById('filterAnalysis');
+
+      workflowData.filters.regions.forEach(r => {
+        regionSelect.innerHTML += `<option value="${r}">${r}</option>`;
+      });
+
+      Object.keys(workflowData.filters.materials).forEach(m => {
+        materialSelect.innerHTML += `<option value="${m}">${m}</option>`;
+      });
+
+      workflowData.filters.systems.forEach(s => {
+        systemSelect.innerHTML += `<option value="${s}">${s}</option>`;
+      });
+
+      workflowData.filters.analysis_types.forEach(a => {
+        analysisSelect.innerHTML += `<option value="${a}">${a}</option>`;
+      });
+
+      // Event listeners
+      regionSelect.addEventListener('change', (e) => {
+        state.selectedRegion = e.target.value;
+        updateWarningBanner();
+        updateContextPanel();
+      });
+
+      materialSelect.addEventListener('change', (e) => {
+        state.selectedMaterial = e.target.value;
+        updateWarningBanner();
+        updateContextPanel();
+      });
+
+      systemSelect.addEventListener('change', (e) => {
+        state.selectedSystem = e.target.value;
+      });
+
+      analysisSelect.addEventListener('change', (e) => {
+        state.selectedAnalysis = e.target.value;
+      });
+    }
+
+    function updateWarningBanner() {
+      const banner = document.getElementById('warningBanner');
+      const regionSelect = document.getElementById('filterRegion');
+      const materialSelect = document.getElementById('filterMaterial');
+
+      if (!state.selectedRegion || !state.selectedMaterial) {
+        banner.style.display = 'flex';
+        regionSelect.classList.toggle('warning', !state.selectedRegion);
+        materialSelect.classList.toggle('warning', !state.selectedMaterial);
+      } else {
+        banner.style.display = 'none';
+        regionSelect.classList.remove('warning');
+        materialSelect.classList.remove('warning');
+      }
+    }
+
+    // Initialize workflow
+    function initWorkflow() {
+      const container = document.getElementById('workflowStages');
+      const stages = ['Design Inputs', 'Design Execution', 'Design Outputs'];
+      const stageClasses = ['inputs', 'execution', 'outputs'];
+
+      stages.forEach((stage, idx) => {
+        const stageNodes = workflowData.workflow.nodes.filter(n => n.stage === stage);
+        const stageHTML = `
+          <div class="workflow-stage">
+            <div class="stage-header ${stageClasses[idx]}">${stage}</div>
+            <div class="stage-nodes">
+              ${stageNodes.map(node => `
+                <div class="workflow-node" data-node-id="${node.id}">
+                  <div class="node-header">
+                    <span class="node-name">${node.name}</span>
+                    <div class="node-tags">
+                      ${node.staff_tags.map(tag => `<span class="node-tag ${tag.toLowerCase()}">${tag}</span>`).join('')}
+                    </div>
+                  </div>
+                  <div class="node-summary">${node.contents.slice(0, 2).join('; ')}${node.contents.length > 2 ? '...' : ''}</div>
+                  <div class="node-deliverables">
+                    ${node.deliverable_tags.map(tag => `<span class="deliverable-tag ${tag}" title="Deliverable ${tag}">${tag}</span>`).join('')}
+                  </div>
+                  ${node.notes ? `<div class="node-note"><i class="fas fa-info-circle"></i>${node.notes[0]}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        container.innerHTML += stageHTML;
+      });
+
+      // Add click listeners to nodes
+      document.querySelectorAll('.workflow-node').forEach(node => {
+        node.addEventListener('click', () => {
+          document.querySelectorAll('.workflow-node').forEach(n => n.classList.remove('selected'));
+          node.classList.add('selected');
+          state.selectedNode = node.dataset.nodeId;
+          updateContextPanel();
+        });
+      });
+    }
+
+    function updateContextPanel() {
+      const panel = document.getElementById('contextPanel');
+
+      if (!state.selectedNode) {
+        panel.innerHTML = `
+          <div class="panel-empty">
+            <i class="fas fa-hand-pointer"></i>
+            <p>Select a workflow step to view details and software recommendations</p>
+          </div>
+        `;
+        return;
+      }
+
+      const node = workflowData.workflow.nodes.find(n => n.id === state.selectedNode);
+      if (!node) return;
+
+      const edges = workflowData.workflow.edges;
+      const incomingEdges = edges.filter(e => e.to === state.selectedNode);
+      const outgoingEdges = edges.filter(e => e.from === state.selectedNode);
+
+      const softwareIds = nodeSoftwareMapping[state.selectedNode] || [];
+      const software = softwareIds.map(id => workflowData.software_catalog.find(s => s.id === id)).filter(Boolean);
+      const coreSoftware = software.filter(s => s.core);
+      const exceptionSoftware = software.filter(s => s.exception);
+
+      const filtersComplete = state.selectedRegion && state.selectedMaterial;
+
+      panel.innerHTML = `
+        <div class="panel-header">
+          <div class="panel-title">${node.name}</div>
+          <div class="panel-subtitle">${node.stage}</div>
+        </div>
+        <div class="panel-content">
+          <div class="panel-section">
+            <div class="section-title"><i class="fas fa-clipboard-list"></i> Step Overview</div>
+            <ul class="content-list">
+              ${node.contents.map(c => `<li>${c}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="panel-section">
+            <div class="section-title"><i class="fas fa-cube"></i> Recommended Software</div>
+            ${!filtersComplete ? `
+              <div class="empty-state" style="padding: 24px;">
+                <i class="fas fa-filter" style="font-size: 24px;"></i>
+                <p style="font-size: 13px;">Select Region and Material to view recommendations</p>
+              </div>
+            ` : software.length === 0 ? `
+              <div class="empty-state" style="padding: 24px;">
+                <i class="fas fa-inbox" style="font-size: 24px;"></i>
+                <p style="font-size: 13px;">No results returned under the current filters</p>
+                <a href="#">Contact steward</a>
+              </div>
+            ` : `
+              <div class="toggle-row">
+                <div class="toggle ${state.includeExceptions ? 'active' : ''}" id="panelExceptionsToggle"></div>
+                <span class="toggle-label">Show Exceptions</span>
+              </div>
+              ${coreSoftware.map(s => `
+                <div class="software-item">
+                  <div class="software-info">
+                    <div class="software-icon">${s.name.charAt(0)}</div>
+                    <div>
+                      <div class="software-name">${s.name}</div>
+                      <div class="software-category">${s.category.replace(/^\d+\)\s*/, '')}</div>
+                    </div>
+                  </div>
+                  <span class="software-badge core">Core</span>
+                </div>
+              `).join('')}
+              <div id="exceptionSoftwareList" style="${state.includeExceptions ? '' : 'display: none;'}">
+                ${exceptionSoftware.map(s => `
+                  <div class="software-item">
+                    <div class="software-info">
+                      <div class="software-icon">${s.name.charAt(0)}</div>
+                      <div>
+                        <div class="software-name">${s.name}</div>
+                        <div class="software-category">${s.category.replace(/^\d+\)\s*/, '')}</div>
+                      </div>
+                    </div>
+                    <span class="software-badge exception">Exception</span>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+
+          <div class="panel-section">
+            <div class="section-title"><i class="fas fa-link"></i> Related Steps</div>
+            ${incomingEdges.length === 0 && outgoingEdges.length === 0 ? '<p style="font-size: 13px; color: var(--text-muted);">No related steps</p>' : ''}
+            ${incomingEdges.map(e => {
+              const fromNode = workflowData.workflow.nodes.find(n => n.id === e.from);
+              return `
+                <div class="related-step ${e.type}">
+                  <i class="fas fa-arrow-left"></i>
+                  <span><strong>${fromNode?.name || e.from}</strong> → ${e.type}</span>
+                </div>
+              `;
+            }).join('')}
+            ${outgoingEdges.map(e => {
+              const toNode = workflowData.workflow.nodes.find(n => n.id === e.to);
+              return `
+                <div class="related-step ${e.type}">
+                  <i class="fas fa-arrow-right"></i>
+                  <span>${e.type} → <strong>${toNode?.name || e.to}</strong></span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="panel-section">
+            <div class="section-title"><i class="fas fa-user-tie"></i> Tool Stewards & Training</div>
+            <p style="font-size: 13px; color: var(--text-muted);">Contact your regional design technology lead for steward information and training resources.</p>
+          </div>
+        </div>
+      `;
+
+      // Add toggle listener
+      const toggle = document.getElementById('panelExceptionsToggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          state.includeExceptions = !state.includeExceptions;
+          toggle.classList.toggle('active', state.includeExceptions);
+          const list = document.getElementById('exceptionSoftwareList');
+          if (list) {
+            list.style.display = state.includeExceptions ? '' : 'none';
+          }
+        });
+      }
+    }
+
+    // Initialize Software Tab
+    function initSoftwareTab() {
+      const categories = [...new Set(workflowData.software_catalog.map(s => s.category))];
+      const chipsContainer = document.getElementById('categoryChips');
+
+      chipsContainer.innerHTML = `<button class="filter-chip active" data-category="">All</button>`;
+      categories.forEach(cat => {
+        const shortName = cat.replace(/^\d+\)\s*/, '');
+        chipsContainer.innerHTML += `<button class="filter-chip" data-category="${cat}">${shortName}</button>`;
+      });
+
+      // Category chip listeners
+      document.querySelectorAll('#categoryChips .filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#categoryChips .filter-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          state.selectedCategory = chip.dataset.category;
+          renderSoftwareGrid();
+        });
+      });
+
+      // Search listener
+      document.getElementById('softwareSearch').addEventListener('input', (e) => {
+        state.softwareSearch = e.target.value.toLowerCase();
+        renderSoftwareGrid();
+      });
+
+      // Toggle listeners
+      document.getElementById('coreOnlyToggle').addEventListener('click', function() {
+        state.coreOnly = !state.coreOnly;
+        this.classList.toggle('active', state.coreOnly);
+        renderSoftwareGrid();
+      });
+
+      document.getElementById('includeExceptionsToggle').addEventListener('click', function() {
+        state.includeExceptions = !state.includeExceptions;
+        this.classList.toggle('active', state.includeExceptions);
+        renderSoftwareGrid();
+      });
+
+      renderSoftwareGrid();
+    }
+
+    function renderSoftwareGrid() {
+      const grid = document.getElementById('softwareGrid');
+      let filtered = workflowData.software_catalog;
+
+      if (state.softwareSearch) {
+        filtered = filtered.filter(s => s.name.toLowerCase().includes(state.softwareSearch));
+      }
+
+      if (state.selectedCategory) {
+        filtered = filtered.filter(s => s.category === state.selectedCategory);
+      }
+
+      if (state.coreOnly) {
+        filtered = filtered.filter(s => s.core);
+      }
+
+      if (!state.includeExceptions) {
+        filtered = filtered.filter(s => !s.exception);
+      }
+
+      // Sort by usage
+      filtered.sort((a, b) => (b.survey_usage || 0) - (a.survey_usage || 0));
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fas fa-search"></i>
+            <p>No software matches your filters</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(s => `
+        <div class="software-card animate-in">
+          <div class="software-card-header">
+            <div class="software-card-icon">${s.name.charAt(0)}</div>
+            <div style="display: flex; gap: 6px;">
+              ${s.core ? '<span class="software-badge core">Core</span>' : ''}
+              ${s.exception ? '<span class="software-badge exception">Exception</span>' : ''}
+            </div>
+          </div>
+          <div class="software-card-title">${s.name}</div>
+          <div class="software-card-meta">${s.category.replace(/^\d+\)\s*/, '')}</div>
+          ${s.survey_usage !== null ? `
+            <div class="usage-bar">
+              <div class="usage-label">
+                <span>Survey Usage</span>
+                <span>${Math.round(s.survey_usage * 100)}%</span>
+              </div>
+              <div class="usage-track">
+                <div class="usage-fill" style="width: ${s.survey_usage * 100}%"></div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Tab switching
+    function initTabs() {
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabId = tab.dataset.tab;
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          document.getElementById(`${tabId}Tab`).classList.add('active');
+          state.activeTab = tabId;
+        });
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initFilters();
+      initWorkflow();
+      initSoftwareTab();
+      initTabs();
+      updateWarningBanner();
+    });
+  </script>
+</body>
+</html>
